@@ -16,11 +16,12 @@ public class Nostre2
   private int colorNostre=1;
   private int prof;
   private boolean primerMove = true;
-          
+  private int contaNodes;
   public Nostre2(int pprof)
   {
     nom = "ConectameEsta2";
     prof = pprof;
+    contaNodes = 0;
   }
   
   public int moviment(Tauler t, int color)
@@ -30,21 +31,20 @@ public class Nostre2
 //      col = (int)(t.getMida() * Math.random());
 //    }
       if(primerMove==true){
+        primerMove = false;
         for(int i = 0; i<8;i++){
               if(t.getColor(0, i)!=0){
                   colorNostre=colorNostre*-1;
                   break;
               }
         }
-      }
+        if(t.getColor(0,3)==0)
+            return 3;
+        }
       
-//    if(primerMove==true){
-//
-//        primerMove = false;
-//        return 3;
-//    }
-//    
+   
     int nextCol = minimax(t,prof);
+    System.out.println("Nodes total = "+ contaNodes);
     return nextCol;
   }
   
@@ -68,8 +68,9 @@ public int minimax(Tauler pt, int pprof){
     int beta = Integer.MAX_VALUE;
     for (int i = 0; i < 8; i++){
         if(pt.movpossible(i)){//Si podem moure l'analitezem, si no, la descartem
+
             Tauler move = new Tauler(pt);
-            move.afegeix(i, 1);
+            move.afegeix(i, colorNostre);
             int valorNou = movMin(move, i ,pprof-1,alpha,beta);
             if(valorNou > valor){
                 valor = valorNou;
@@ -94,26 +95,27 @@ public boolean terminal(Tauler pt, int lastcol){
 public int movMax(Tauler pt, int lastcol ,int pprof,int alpha,int beta){
     
     if(terminal(pt, lastcol)){
-        if(pt.solucio(lastcol,-1)){//Perdem
+        if(pt.solucio(lastcol,colorNostre*-1)){//Perdem
             return -100000;
-        }else if(pt.solucio(lastcol,1)){//perdem
+        }else if(pt.solucio(lastcol,colorNostre)){//perdem
            return 100000;
         }else{//No queda moviments
-            return 0;
+            return Heuristica(pt,colorNostre);
         }
       
     }else if (pprof == 0){
-        return Heuristica(pt,1);
+        return Heuristica(pt,colorNostre);
     }
         int value = Integer.MIN_VALUE;
         for(int i = 0; i < 8; i++){
             if(pt.movpossible(i)){
+                
                 Tauler move = new Tauler(pt);
-                move.afegeix(i,1);//ARA VOLEM MINIMITZAR EL MOVIMENT DEL RIVAL
+                move.afegeix(i,colorNostre);//ARA VOLEM MINIMITZAR EL MOVIMENT DEL RIVAL
                 value = Math.max(value, movMin(move,i,pprof-1,alpha ,beta));
                 alpha = Math.max(value,alpha);
-                if(alpha>=beta)
-                    break;
+//                if(alpha>=beta)
+//                    break;
              }
         }
         return value;   
@@ -123,27 +125,27 @@ public int movMax(Tauler pt, int lastcol ,int pprof,int alpha,int beta){
 
 public int movMin(Tauler pt,int lastcol, int pprof,int alpha, int beta){
     if(terminal(pt, lastcol)){
-        if(pt.solucio(lastcol,-1)){//Guanyem
+        if(pt.solucio(lastcol,colorNostre*-1)){//Guanyem
            return -100000;
 //            return (Heuristica(pt));
-        }else if(pt.solucio(lastcol,1)){//perdem
+        }else if(pt.solucio(lastcol,colorNostre)){//perdem
                return 100000;
 //            return (Heuristica(pt));
         }else{//No queda moviments
-           return 0;
+           return Heuristica(pt,colorNostre);
         }
     }else if (pprof == 0){
-        return Heuristica(pt,-1);
+        return Heuristica(pt,colorNostre);
     }
         int value = Integer.MAX_VALUE;
         for(int i = 0; i < 8; i++){
             if(pt.movpossible(i)){
                 Tauler move = new Tauler(pt);
-                move.afegeix(i,-1);//ARA VOLEM MINIMITZAR EL MOVIMENT DEL RIVAL
+                move.afegeix(i, colorNostre*-1);//ARA VOLEM MINIMITZAR EL MOVIMENT DEL RIVAL
                 value = Math.min(value, movMax(move,i,pprof -1,alpha,beta));
                 beta = Math.min(value,beta);
-                if(alpha>=beta)
-                    break;
+//                if(alpha>=beta)
+//                    break;
              }
         }
 //        System.out.println(value);
@@ -154,8 +156,9 @@ public int movMin(Tauler pt,int lastcol, int pprof,int alpha, int beta){
 
 public int Heuristica(Tauler pt,int color){
     int  Heur = 0;
-    Heur = Valor(pt,color);
-    return Heur*color;
+    contaNodes = contaNodes + 1;
+    Heur = Valor(pt,color)-Valor(pt,color*-1);
+    return Heur;
 }
 
 public int Valor(Tauler pt, int color){
@@ -163,6 +166,7 @@ public int Valor(Tauler pt, int color){
 //    System.out.println("-----------------------------");
     for(int i = 0;i<8;i++){
         for(int j=0;j<8;j++){
+            
            //Si es columna central le sumamos un plus.
            if(pt.solucio(j, color)){
                return 100000;
