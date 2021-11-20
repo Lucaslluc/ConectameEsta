@@ -8,7 +8,7 @@ import java.util.Random;
  * "Alea jacta est"
  * @author Profe
  */
-public class Nostre2
+public class Nostre3
   implements Jugador, IAuto
 {
   private String nom;
@@ -18,13 +18,22 @@ public class Nostre2
   private boolean primerMove;
   private int contaNodes;
   
+public int[][] tablaPuntuacio = {
+    {3, 4, 5, 7, 7, 5, 4, 3},
+    {4, 6, 8,10,10, 8, 6, 4},
+    {5, 8,11,13,13,11, 8, 5},
+    {7,10,13,16,16,13,10, 7},
+    {7,10,13,16,16,13,10, 7},
+    {5, 8,11,13,13,11, 8, 5},
+    {4, 6, 8,10,10, 8, 6, 4},
+    {3, 4, 5, 7, 7, 5, 4, 3}
+}
+                                                            ;
   
   
-  
-  
-  public Nostre2(int pprof)
+  public Nostre3(int pprof)
   {
-    nom = "ConectameEsta2";
+    nom = "ConectameEsta3";
     prof = pprof;
     contaNodes = 0;
     primerMove =true;
@@ -49,7 +58,7 @@ public class Nostre2
 //            return 3;
 //        if(t.getColor(0,4)==0)
 //            return 4;
-           // return new Random().nextBoolean()? 3 : 5;
+            //return new Random().nextBoolean()? 3 : 5;
         }
       
    
@@ -76,7 +85,6 @@ public int minimax(Tauler pt, int pprof){
     int col = 0;
     int alpha = Integer.MIN_VALUE;
     int beta = Integer.MAX_VALUE;
-    
     for (int i = 0; i < 8; i++){
         if(pt.movpossible(i)){//Si podem moure l'analitezem, si no, la descartem
 
@@ -171,10 +179,30 @@ public int movMin(Tauler pt,int lastcol, int pprof,int alpha, int beta){
 
 
 public int Heuristica(Tauler pt,int color){
-    int  Heur = 0;
-    contaNodes = contaNodes + 1;
-    Heur = Valor(pt,colorNostre)-(Valor(pt,colorNostre*-1));
-    return Heur;
+//    int  Heur = 0;
+  contaNodes = contaNodes + 1;
+//    Heur = Valor(pt,colorNostre)-(Valor(pt,colorNostre*-1)*2);
+//    return Heur;
+
+
+    int sum = 0;
+    for (int i = 0; i < 8; i++) {
+        if(pt.getColor(i, 0)==0 && pt.getColor(i,1)==0  &&
+            pt.getColor(i, 2)==0 && pt.getColor(i,3)==0 &&
+             pt.getColor(i, 4)==0 && pt.getColor(i,5)==0 &&
+                 pt.getColor(i, 6)==0 && pt.getColor(i,7)==0){
+            break;
+        }
+        for (int j = 0; j < 8; j++) {
+            if (pt.getColor(i, j) == colorNostre) {
+                sum += tablaPuntuacio[i][j];
+            } else if (pt.getColor(i, j) == colorNostre*-1) {
+                sum -= tablaPuntuacio[i][j];
+            }
+        }
+    }
+    return sum;
+
 }
 
 public int Valor(Tauler pt, int color){
@@ -246,22 +274,22 @@ public int Valor(Tauler pt, int color){
                  **************/
                 if(j+2<8){//Der
                     if(pt.getColor(i, j)==color && pt.getColor(i, j+1)==color && pt.getColor(i, j+2)==color){
-                        value +=1000;
+                        value +=100;
                     }
                 }
                 if(j-2>-1){//Izq
                     if(pt.getColor(i, j)==color && pt.getColor(i, j-1)==color && pt.getColor(i, j-2)==color){
-                        value +=1000;
+                        value +=100;
                     }
                 }
                 if(i+2<8){//UP
                     if(pt.getColor(i, j)==color && pt.getColor(i+1, j)==color && pt.getColor(i+1, j)==color){
-                        value +=1100;
+                        value +=110;
                     }
                 }
                 if(i-2>-1){//Down
                     if(pt.getColor(i, j)==color && pt.getColor(i-1, j)==color && pt.getColor(i-2, j)==color){
-                        value +=1100;
+                        value +=110;
                     }
                 }
                 if(j+2<8 && i+2<8){//UP-DER-Diago
@@ -293,5 +321,10 @@ public int Valor(Tauler pt, int color){
     }
     return value;
 }
+
+
+
+
+
 }
 

@@ -32,6 +32,7 @@ public class Juga2 extends javax.swing.JFrame {
     int otherColor;
     boolean autoMode = true;
     boolean estaPensant = false;
+    
 
     /**
      * Creates new form NewJFrame
@@ -98,11 +99,12 @@ public class Juga2 extends javax.swing.JFrame {
         //Jugador p1 = new Manual();
 //        Jugador p1 = new Nostre(4);
         //Jugador p2 = new Nostre(4);
-        Jugador p2 = new Nostre2(8);
-        Jugador p1 = new Profe(8,true);
+       // Jugador p2 = new Nostre2(2);
+         Jugador p2= new Nostre3(8);
+        Jugador p1= new Profe(8,true);
        //Jugador p2 = new Manual();
 
-        boolean autoMode = false;
+        boolean autoMode = true;
         final Juga2 j = new Juga2(p1, p2, autoMode);
 
         /* Create and display the form */
